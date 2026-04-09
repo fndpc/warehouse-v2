@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MSTest" Version="4.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\WarehouseManager.Application\WarehouseManager.Application.csproj" />
+    <ProjectReference Include="..\..\src\WarehouseManager.Domain\WarehouseManager.Domain.csproj" />
+    <ProjectReference Include="..\..\src\WarehouseManager.Infrastructure\WarehouseManager.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

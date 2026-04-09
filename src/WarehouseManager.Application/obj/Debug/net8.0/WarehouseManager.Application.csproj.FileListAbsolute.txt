@@ -1,0 +1,15 @@
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\bin\Debug\net8.0\WarehouseManager.Application.deps.json
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\bin\Debug\net8.0\WarehouseManager.Application.dll
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\bin\Debug\net8.0\WarehouseManager.Application.pdb
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\bin\Debug\net8.0\WarehouseManager.Domain.dll
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\bin\Debug\net8.0\WarehouseManager.Domain.pdb
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\obj\Debug\net8.0\WarehouseManager.Application.csproj.AssemblyReference.cache
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\obj\Debug\net8.0\WarehouseManager.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\obj\Debug\net8.0\WarehouseManager.Application.AssemblyInfoInputs.cache
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\obj\Debug\net8.0\WarehouseManager.Application.AssemblyInfo.cs
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\obj\Debug\net8.0\WarehouseManager.Application.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\obj\Debug\net8.0\Warehous.98731475.Up2Date
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\obj\Debug\net8.0\WarehouseManager.Application.dll
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\obj\Debug\net8.0\refint\WarehouseManager.Application.dll
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\obj\Debug\net8.0\WarehouseManager.Application.pdb
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Application\obj\Debug\net8.0\ref\WarehouseManager.Application.dll

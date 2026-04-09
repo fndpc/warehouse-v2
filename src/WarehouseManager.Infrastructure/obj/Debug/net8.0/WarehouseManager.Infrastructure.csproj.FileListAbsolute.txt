@@ -1,0 +1,17 @@
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\obj\Debug\net8.0\WarehouseManager.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\obj\Debug\net8.0\WarehouseManager.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\obj\Debug\net8.0\WarehouseManager.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\obj\Debug\net8.0\WarehouseManager.Infrastructure.AssemblyInfo.cs
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\obj\Debug\net8.0\WarehouseManager.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\bin\Debug\net8.0\WarehouseManager.Infrastructure.deps.json
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\bin\Debug\net8.0\WarehouseManager.Infrastructure.dll
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\bin\Debug\net8.0\WarehouseManager.Infrastructure.pdb
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\bin\Debug\net8.0\WarehouseManager.Application.dll
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\bin\Debug\net8.0\WarehouseManager.Domain.dll
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\bin\Debug\net8.0\WarehouseManager.Application.pdb
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\bin\Debug\net8.0\WarehouseManager.Domain.pdb
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\obj\Debug\net8.0\Warehous.312E99D9.Up2Date
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\obj\Debug\net8.0\WarehouseManager.Infrastructure.dll
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\obj\Debug\net8.0\refint\WarehouseManager.Infrastructure.dll
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\obj\Debug\net8.0\WarehouseManager.Infrastructure.pdb
+C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Infrastructure\obj\Debug\net8.0\ref\WarehouseManager.Infrastructure.dll
