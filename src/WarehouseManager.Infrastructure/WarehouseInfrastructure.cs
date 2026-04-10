@@ -52,97 +52,53 @@ public sealed class WarehouseOperationsService(
     {
         await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
         await db.Database.EnsureCreatedAsync(cancellationToken);
-        if (await db.Products.AnyAsync(cancellationToken))
-        {
-            return;
-        }
-
-        var locations = new[]
-        {
-            new StorageLocation { Code = "A-01-01", Zone = "A", Rack = "01", Slot = "01" },
-            new StorageLocation { Code = "A-01-02", Zone = "A", Rack = "01", Slot = "02" },
-            new StorageLocation { Code = "B-01-01", Zone = "B", Rack = "01", Slot = "01" },
-            new StorageLocation { Code = "C-02-03", Zone = "C", Rack = "02", Slot = "03" }
-        };
-
-        var products = new[]
-        {
-            new Product { Sku = "MILK-1L", Name = "Молоко 1л", BatchNumber = "M-240401", ExpirationDate = DateOnly.FromDateTime(DateTime.Today.AddDays(8)), Size = "1л", WeightKg = 1.02m },
-            new Product { Sku = "CHEESE-45", Name = "Сыр 45%", BatchNumber = "C-240329", ExpirationDate = DateOnly.FromDateTime(DateTime.Today.AddDays(20)), Size = "0.5кг", WeightKg = 0.50m },
-            new Product { Sku = "JUICE-APPLE", Name = "Сок яблочный", BatchNumber = "J-240405", ExpirationDate = DateOnly.FromDateTime(DateTime.Today.AddDays(40)), Size = "1л", WeightKg = 1.00m }
-        };
-
-        db.AddRange(locations);
-        db.AddRange(products);
-        await db.SaveChangesAsync(cancellationToken);
-
-        var stockLots = new[]
-        {
-            new StockLot { ProductId = products[0].Id, LocationId = locations[0].Id, BatchNumber = "M-240401", ExpirationDate = products[0].ExpirationDate, Quantity = 120m },
-            new StockLot { ProductId = products[1].Id, LocationId = locations[1].Id, BatchNumber = "C-240329", ExpirationDate = products[1].ExpirationDate, Quantity = 64m },
-            new StockLot { ProductId = products[2].Id, LocationId = locations[2].Id, BatchNumber = "J-240405", ExpirationDate = products[2].ExpirationDate, Quantity = 90m }
-        };
-        db.StockLots.AddRange(stockLots);
-        db.StockMovements.AddRange(stockLots.Select(lot => new StockMovement
-        {
-            ProductId = lot.ProductId,
-            ToLocationId = lot.LocationId,
-            BatchNumber = lot.BatchNumber,
-            ExpirationDate = lot.ExpirationDate,
-            Quantity = lot.Quantity,
-            MovementType = MovementType.Receipt,
-            DocumentNumber = $"SEED-{lot.ProductId}",
-            Note = "Начальный остаток"
-        }));
-
-        var session = new InventorySession
-        {
-            SessionNumber = $"INV-{DateTime.UtcNow:yyyyMMdd}-001",
-            InventoryType = InventoryType.Cycle,
-            Scope = "A"
-        };
-        db.InventorySessions.Add(session);
-        await db.SaveChangesAsync(cancellationToken);
-
-        db.InventoryLines.AddRange(
-            new InventoryLine
-            {
-                InventorySessionId = session.Id,
-                ProductId = products[0].Id,
-                LocationId = locations[0].Id,
-                BatchNumber = "M-240401",
-                ExpirationDate = products[0].ExpirationDate,
-                ExpectedQuantity = 120m
-            },
-            new InventoryLine
-            {
-                InventorySessionId = session.Id,
-                ProductId = products[1].Id,
-                LocationId = locations[1].Id,
-                BatchNumber = "C-240329",
-                ExpirationDate = products[1].ExpirationDate,
-                ExpectedQuantity = 64m
-            });
-        db.AuditEvents.Add(new AuditEvent
-        {
-            Action = "Инициализация",
-            EntityName = "Warehouse",
-            EntityKey = "seed",
-            Details = "Созданы демонстрационные данные склада"
-        });
-        await db.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<IReadOnlyList<LookupItemDto>> GetProductsAsync(CancellationToken cancellationToken = default)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-        return await db.Products.OrderBy(x => x.Name).Select(x => new LookupItemDto(x.Id, $"{x.Sku} | {x.Name}")).ToListAsync(cancellationToken);
+        return await db.Products
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.Name)
+            .Select(x => new LookupItemDto(x.Id, $"{x.Sku} | {x.Name}"))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<ProductDto>> GetProductCatalogAsync(CancellationToken cancellationToken = default)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+        return await db.Products
+            .OrderBy(x => x.Name)
+            .Select(x => new ProductDto(
+                x.Id,
+                x.Sku,
+                x.Name,
+                x.BatchNumber,
+                x.SerialNumber,
+                x.ExpirationDate,
+                x.Size,
+                x.WeightKg,
+                x.IsActive))
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<IReadOnlyList<LookupItemDto>> GetLocationsAsync(CancellationToken cancellationToken = default)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-        return await db.StorageLocations.Where(x => x.IsActive).OrderBy(x => x.Code).Select(x => new LookupItemDto(x.Id, $"{x.Code} ({x.Zone})")).ToListAsync(cancellationToken);
+        return await db.StorageLocations
+            .Where(x => x.IsActive)
+            .OrderBy(x => x.Code)
+            .Select(x => new LookupItemDto(x.Id, $"{x.Code} ({x.Zone})"))
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<StorageLocationDto>> GetStorageLocationsAsync(CancellationToken cancellationToken = default)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+        return await db.StorageLocations
+            .OrderBy(x => x.Code)
+            .Select(x => new StorageLocationDto(x.Id, x.Code, x.Zone, x.Rack, x.Slot, x.IsActive))
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<DashboardSummaryDto> GetDashboardAsync(CancellationToken cancellationToken = default)
@@ -150,8 +106,8 @@ public sealed class WarehouseOperationsService(
         await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
         var expiringQuery = db.StockLots.Include(x => x.Product).Include(x => x.Location)
             .Where(x => x.Quantity > 0 && x.ExpirationDate != null && x.ExpirationDate <= DateOnly.FromDateTime(DateTime.Today.AddDays(14)));
-        var totalQuantity = await db.StockLots.SumAsync(x => x.Quantity, cancellationToken);
-        var distinctProducts = await db.StockLots.Select(x => x.ProductId).Distinct().CountAsync(cancellationToken);
+        var totalQuantity = Convert.ToDecimal(await db.StockLots.SumAsync(x => (double?)x.Quantity, cancellationToken) ?? 0d);
+        var distinctProducts = await db.StockLots.Where(x => x.Quantity > 0).Select(x => x.ProductId).Distinct().CountAsync(cancellationToken);
         var expiringLots = await expiringQuery.CountAsync(cancellationToken);
         var expiring = await expiringQuery.OrderBy(x => x.ExpirationDate).Take(10)
             .Select(x => new ExpiringLotDto(x.Product.Sku, x.Product.Name, x.Location.Code, x.BatchNumber, x.ExpirationDate, x.Quantity))
@@ -169,11 +125,26 @@ public sealed class WarehouseOperationsService(
         var query = db.StockLots.Include(x => x.Product).Include(x => x.Location).Where(x => x.Quantity > 0);
         if (!string.IsNullOrWhiteSpace(search))
         {
-            query = query.Where(x => x.Product.Sku.Contains(search) || x.Product.Name.Contains(search) || x.Location.Code.Contains(search) || x.BatchNumber.Contains(search));
+            query = query.Where(x =>
+                x.Product.Sku.Contains(search) ||
+                x.Product.Name.Contains(search) ||
+                x.Location.Code.Contains(search) ||
+                x.BatchNumber.Contains(search));
         }
 
         return await query.OrderBy(x => x.Product.Name).ThenBy(x => x.ExpirationDate)
-            .Select(x => new StockOverviewDto(x.Id, x.ProductId, x.Product.Sku, x.Product.Name, x.Location.Code, x.Location.Zone, x.BatchNumber, x.SerialNumber, x.ExpirationDate, x.Quantity, x.ReservedQuantity))
+            .Select(x => new StockOverviewDto(
+                x.Id,
+                x.ProductId,
+                x.Product.Sku,
+                x.Product.Name,
+                x.Location.Code,
+                x.Location.Zone,
+                x.BatchNumber,
+                x.SerialNumber,
+                x.ExpirationDate,
+                x.Quantity,
+                x.ReservedQuantity))
             .ToListAsync(cancellationToken);
     }
 
@@ -181,8 +152,19 @@ public sealed class WarehouseOperationsService(
     {
         await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
         return await db.StockMovements.Include(x => x.Product).Include(x => x.FromLocation).Include(x => x.ToLocation)
-            .OrderByDescending(x => x.CreatedUtc).Take(200)
-            .Select(x => new MovementDto(x.CreatedUtc, x.MovementType.ToString(), x.Product.Sku, x.Product.Name, x.FromLocation != null ? x.FromLocation.Code : null, x.ToLocation != null ? x.ToLocation.Code : null, x.Quantity, x.DocumentNumber, x.Note, x.Actor))
+            .OrderByDescending(x => x.CreatedUtc)
+            .Take(200)
+            .Select(x => new MovementDto(
+                x.CreatedUtc,
+                TranslateMovementType(x.MovementType),
+                x.Product.Sku,
+                x.Product.Name,
+                x.FromLocation != null ? x.FromLocation.Code : null,
+                x.ToLocation != null ? x.ToLocation.Code : null,
+                x.Quantity,
+                x.DocumentNumber,
+                x.Note,
+                x.Actor))
             .ToListAsync(cancellationToken);
     }
 
@@ -214,9 +196,7 @@ public sealed class WarehouseOperationsService(
             })
             .ToListAsync(cancellationToken);
 
-        var statsBySessionId = lineStats.ToDictionary(
-            x => x.InventorySessionId,
-            x => (x.Positions, x.Discrepancies));
+        var statsBySessionId = lineStats.ToDictionary(x => x.InventorySessionId, x => (x.Positions, x.Discrepancies));
 
         return sessions
             .Select(x =>
@@ -225,8 +205,8 @@ public sealed class WarehouseOperationsService(
                 return new InventorySessionDto(
                     x.Id,
                     x.SessionNumber,
-                    x.InventoryType.ToString(),
-                    x.Status.ToString(),
+                    TranslateInventoryType(x.InventoryType),
+                    TranslateInventoryStatus(x.Status),
                     x.Scope,
                     x.CreatedUtc,
                     x.CompletedUtc,
@@ -261,16 +241,83 @@ public sealed class WarehouseOperationsService(
     public async Task<IReadOnlyList<AuditEventDto>> GetAuditTrailAsync(CancellationToken cancellationToken = default)
     {
         await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-        return await db.AuditEvents.OrderByDescending(x => x.CreatedUtc).Take(200)
+        return await db.AuditEvents
+            .OrderByDescending(x => x.CreatedUtc)
+            .Take(200)
             .Select(x => new AuditEventDto(x.CreatedUtc, x.Actor, x.Action, x.EntityName, x.EntityKey, x.Details))
             .ToListAsync(cancellationToken);
+    }
+
+    public async Task<int> CreateProductAsync(CreateProductRequest request, CancellationToken cancellationToken = default)
+    {
+        ValidateRequiredText(request.Sku, "Артикул");
+        ValidateRequiredText(request.Name, "Наименование");
+        ValidateRequiredText(request.Size, "Размер");
+        ValidateNonNegative(request.WeightKg, "Вес");
+
+        await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+        var normalizedSku = request.Sku.Trim().ToUpperInvariant();
+        if (await db.Products.AnyAsync(x => x.Sku == normalizedSku, cancellationToken))
+        {
+            throw new InvalidOperationException($"Товар с артикулом {normalizedSku} уже существует.");
+        }
+
+        var product = new Product
+        {
+            Sku = normalizedSku,
+            Name = request.Name.Trim(),
+            Size = request.Size.Trim(),
+            WeightKg = request.WeightKg,
+            BatchNumber = NormalizeOptional(request.BatchNumber),
+            SerialNumber = NormalizeOptional(request.SerialNumber),
+            ExpirationDate = request.ExpirationDate
+        };
+
+        db.Products.Add(product);
+        db.AuditEvents.Add(CreateAudit("Создание товара", "Товар", normalizedSku, $"Добавлен товар «{product.Name}»."));
+        await db.SaveChangesAsync(cancellationToken);
+        return product.Id;
+    }
+
+    public async Task<int> CreateStorageLocationAsync(CreateStorageLocationRequest request, CancellationToken cancellationToken = default)
+    {
+        ValidateRequiredText(request.Code, "Код ячейки");
+        ValidateRequiredText(request.Zone, "Зона");
+        ValidateRequiredText(request.Rack, "Стеллаж");
+        ValidateRequiredText(request.Slot, "Место");
+
+        await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+        var normalizedCode = request.Code.Trim().ToUpperInvariant();
+        if (await db.StorageLocations.AnyAsync(x => x.Code == normalizedCode, cancellationToken))
+        {
+            throw new InvalidOperationException($"Ячейка {normalizedCode} уже существует.");
+        }
+
+        var location = new StorageLocation
+        {
+            Code = normalizedCode,
+            Zone = request.Zone.Trim().ToUpperInvariant(),
+            Rack = request.Rack.Trim().ToUpperInvariant(),
+            Slot = request.Slot.Trim().ToUpperInvariant()
+        };
+
+        db.StorageLocations.Add(location);
+        db.AuditEvents.Add(CreateAudit("Создание ячейки", "Ячейка", normalizedCode, "Добавлена новая ячейка хранения."));
+        await db.SaveChangesAsync(cancellationToken);
+        return location.Id;
     }
 
     public async Task ReceiveAsync(ReceiptRequest request, CancellationToken cancellationToken = default)
     {
         ValidatePositive(request.Quantity);
         await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
-        var lot = await db.StockLots.FirstOrDefaultAsync(x => x.ProductId == request.ProductId && x.LocationId == request.LocationId && x.BatchNumber == request.BatchNumber && x.SerialNumber == request.SerialNumber, cancellationToken);
+        var lot = await db.StockLots.FirstOrDefaultAsync(
+            x => x.ProductId == request.ProductId &&
+                 x.LocationId == request.LocationId &&
+                 x.BatchNumber == request.BatchNumber &&
+                 x.SerialNumber == request.SerialNumber,
+            cancellationToken);
+
         if (lot is null)
         {
             lot = new StockLot
@@ -286,6 +333,7 @@ public sealed class WarehouseOperationsService(
 
         lot.Quantity += request.Quantity;
         lot.ExpirationDate = request.ExpirationDate;
+
         db.StockMovements.Add(new StockMovement
         {
             ProductId = request.ProductId,
@@ -298,7 +346,7 @@ public sealed class WarehouseOperationsService(
             DocumentNumber = request.DocumentNumber,
             Note = request.Note
         });
-        db.AuditEvents.Add(CreateAudit("Приемка", "Receipt", request.DocumentNumber, $"Принято {request.Quantity:0.###} ед."));
+        db.AuditEvents.Add(CreateAudit("Приемка", "Документ", request.DocumentNumber, $"Принято {request.Quantity:0.###} ед."));
         await db.SaveChangesAsync(cancellationToken);
     }
 
@@ -306,14 +354,17 @@ public sealed class WarehouseOperationsService(
     {
         if (request.FromLocationId == request.ToLocationId)
         {
-            throw new InvalidOperationException("Источник и целевая ячейка совпадают.");
+            throw new InvalidOperationException("Исходная и целевая ячейки совпадают.");
         }
 
         ValidatePositive(request.Quantity);
         await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
-        var lots = await db.StockLots.Where(x => x.ProductId == request.ProductId && x.LocationId == request.FromLocationId && x.Quantity > 0)
-            .OrderBy(x => x.ExpirationDate).ThenBy(x => x.CreatedUtc).ToListAsync(cancellationToken);
+        var lots = await db.StockLots
+            .Where(x => x.ProductId == request.ProductId && x.LocationId == request.FromLocationId && x.Quantity > 0)
+            .OrderBy(x => x.ExpirationDate)
+            .ThenBy(x => x.CreatedUtc)
+            .ToListAsync(cancellationToken);
         var remaining = request.Quantity;
 
         foreach (var sourceLot in lots)
@@ -368,7 +419,7 @@ public sealed class WarehouseOperationsService(
             throw new InvalidOperationException("Недостаточно остатка для перемещения.");
         }
 
-        db.AuditEvents.Add(CreateAudit("Перемещение", "Transfer", request.DocumentNumber, $"Перемещено {request.Quantity:0.###} ед."));
+        db.AuditEvents.Add(CreateAudit("Перемещение", "Документ", request.DocumentNumber, $"Перемещено {request.Quantity:0.###} ед."));
         await db.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
     }
@@ -378,8 +429,11 @@ public sealed class WarehouseOperationsService(
         ValidatePositive(request.Quantity);
         await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
-        var lots = await db.StockLots.Where(x => x.ProductId == request.ProductId && x.Quantity > 0)
-            .OrderBy(x => x.ExpirationDate).ThenBy(x => x.CreatedUtc).ToListAsync(cancellationToken);
+        var lots = await db.StockLots
+            .Where(x => x.ProductId == request.ProductId && x.Quantity > 0)
+            .OrderBy(x => x.ExpirationDate)
+            .ThenBy(x => x.CreatedUtc)
+            .ToListAsync(cancellationToken);
         var remaining = request.Quantity;
 
         foreach (var lot in lots)
@@ -417,7 +471,7 @@ public sealed class WarehouseOperationsService(
             throw new InvalidOperationException("Недостаточно доступного остатка для отгрузки.");
         }
 
-        db.AuditEvents.Add(CreateAudit("Отгрузка", "Shipment", request.DocumentNumber, $"Отгружено {request.Quantity:0.###} ед."));
+        db.AuditEvents.Add(CreateAudit("Отгрузка", "Документ", request.DocumentNumber, $"Отгружено {request.Quantity:0.###} ед."));
         await db.SaveChangesAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
     }
@@ -453,7 +507,7 @@ public sealed class WarehouseOperationsService(
             ExpirationDate = lot.ExpirationDate,
             ExpectedQuantity = lot.Quantity
         }));
-        db.AuditEvents.Add(CreateAudit("Инвентаризация", "Inventory", session.SessionNumber, $"Создана инвентаризация {scope}."));
+        db.AuditEvents.Add(CreateAudit("Инвентаризация", "Инвентаризация", session.SessionNumber, $"Создана инвентаризация: {scope}."));
         await db.SaveChangesAsync(cancellationToken);
         return session.Id;
     }
@@ -480,7 +534,7 @@ public sealed class WarehouseOperationsService(
         }
 
         line.Comment = comment;
-        db.AuditEvents.Add(CreateAudit(isRecount ? "Повторный пересчет" : "Пересчет", "InventoryLine", line.Id.ToString(), $"Факт={countedQuantity:0.###}."));
+        db.AuditEvents.Add(CreateAudit(isRecount ? "Повторный пересчет" : "Пересчет", "Строка инвентаризации", line.Id.ToString(), $"Факт: {countedQuantity:0.###}."));
         await db.SaveChangesAsync(cancellationToken);
     }
 
@@ -496,7 +550,7 @@ public sealed class WarehouseOperationsService(
 
         session.Status = InventoryStatus.Completed;
         session.CompletedUtc = DateTime.UtcNow;
-        db.AuditEvents.Add(CreateAudit("Закрытие инвентаризации", "Inventory", session.SessionNumber, "Инвентаризация закрыта и заблокирована от редактирования."));
+        db.AuditEvents.Add(CreateAudit("Закрытие инвентаризации", "Инвентаризация", session.SessionNumber, "Инвентаризация закрыта и заблокирована от редактирования."));
         await db.SaveChangesAsync(cancellationToken);
     }
 
@@ -513,7 +567,7 @@ public sealed class WarehouseOperationsService(
             $"Позиций: {session.Positions}{Environment.NewLine}" +
             $"Расхождений: {session.Discrepancies}{Environment.NewLine}{Environment.NewLine}" +
             string.Join(Environment.NewLine, discrepancies.Select(x =>
-                $"{x.Location} | {x.Sku} | учет {x.ExpectedQuantity:0.###} | факт {x.FinalQuantity:0.###} | delta {x.Delta:+0.###;-0.###;0}"));
+                $"{x.Location} | {x.Sku} | учет {x.ExpectedQuantity:0.###} | факт {x.FinalQuantity:0.###} | отклонение {x.Delta:+0.###;-0.###;0}"));
     }
 
     public Task<string> CreateBackupAsync(CancellationToken cancellationToken = default)
@@ -536,6 +590,37 @@ public sealed class WarehouseOperationsService(
             Details = details
         };
 
+    private static string TranslateMovementType(MovementType movementType) => movementType switch
+    {
+        MovementType.Receipt => "Приемка",
+        MovementType.Shipment => "Отгрузка",
+        MovementType.Transfer => "Перемещение",
+        MovementType.InventoryAdjustment => "Корректировка инвентаризации",
+        _ => movementType.ToString()
+    };
+
+    private static string TranslateInventoryType(InventoryType inventoryType) => inventoryType switch
+    {
+        InventoryType.Full => "Полная",
+        InventoryType.Selective => "Выборочная",
+        InventoryType.Cycle => "Циклическая",
+        _ => inventoryType.ToString()
+    };
+
+    private static string TranslateInventoryStatus(InventoryStatus status) => status switch
+    {
+        InventoryStatus.Draft => "Черновик",
+        InventoryStatus.InProgress => "В работе",
+        InventoryStatus.Completed => "Завершена",
+        _ => status.ToString()
+    };
+
+    private static string? NormalizeOptional(string? value)
+    {
+        var trimmed = value?.Trim();
+        return string.IsNullOrWhiteSpace(trimmed) ? null : trimmed;
+    }
+
     private static void ValidatePositive(decimal value)
     {
         if (value <= 0)
@@ -544,11 +629,19 @@ public sealed class WarehouseOperationsService(
         }
     }
 
-    private static void ValidateNonNegative(decimal value)
+    private static void ValidateNonNegative(decimal value, string fieldName = "Количество")
     {
         if (value < 0)
         {
-            throw new InvalidOperationException("Количество не может быть отрицательным.");
+            throw new InvalidOperationException($"{fieldName} не может быть отрицательным.");
+        }
+    }
+
+    private static void ValidateRequiredText(string? value, string fieldName)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            throw new InvalidOperationException($"Поле «{fieldName}» обязательно.");
         }
     }
 }

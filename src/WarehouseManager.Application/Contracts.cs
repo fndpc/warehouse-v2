@@ -4,6 +4,25 @@ namespace WarehouseManager.Application;
 
 public sealed record LookupItemDto(int Id, string Label);
 
+public sealed record ProductDto(
+    int Id,
+    string Sku,
+    string Name,
+    string? DefaultBatchNumber,
+    string? DefaultSerialNumber,
+    DateOnly? DefaultExpirationDate,
+    string Size,
+    decimal WeightKg,
+    bool IsActive);
+
+public sealed record StorageLocationDto(
+    int Id,
+    string Code,
+    string Zone,
+    string Rack,
+    string Slot,
+    bool IsActive);
+
 public sealed record DashboardSummaryDto(
     decimal TotalQuantity,
     int DistinctProducts,
@@ -106,11 +125,28 @@ public sealed record CreateInventoryRequest(
     InventoryType InventoryType,
     string Scope);
 
+public sealed record CreateProductRequest(
+    string Sku,
+    string Name,
+    string Size,
+    decimal WeightKg,
+    string? BatchNumber,
+    string? SerialNumber,
+    DateOnly? ExpirationDate);
+
+public sealed record CreateStorageLocationRequest(
+    string Code,
+    string Zone,
+    string Rack,
+    string Slot);
+
 public interface IWarehouseOperationsService
 {
     Task InitializeAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<LookupItemDto>> GetProductsAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<ProductDto>> GetProductCatalogAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<LookupItemDto>> GetLocationsAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<StorageLocationDto>> GetStorageLocationsAsync(CancellationToken cancellationToken = default);
     Task<DashboardSummaryDto> GetDashboardAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<StockOverviewDto>> GetStockAsync(string? search, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<MovementDto>> GetMovementsAsync(CancellationToken cancellationToken = default);
@@ -120,6 +156,8 @@ public interface IWarehouseOperationsService
     Task ReceiveAsync(ReceiptRequest request, CancellationToken cancellationToken = default);
     Task TransferAsync(TransferRequest request, CancellationToken cancellationToken = default);
     Task ShipAsync(ShipmentRequest request, CancellationToken cancellationToken = default);
+    Task<int> CreateProductAsync(CreateProductRequest request, CancellationToken cancellationToken = default);
+    Task<int> CreateStorageLocationAsync(CreateStorageLocationRequest request, CancellationToken cancellationToken = default);
     Task<int> CreateInventoryAsync(CreateInventoryRequest request, CancellationToken cancellationToken = default);
     Task CountInventoryLineAsync(int lineId, decimal countedQuantity, string comment, bool isRecount, CancellationToken cancellationToken = default);
     Task CompleteInventoryAsync(int inventorySessionId, CancellationToken cancellationToken = default);

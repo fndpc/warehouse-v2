@@ -1,0 +1,18 @@
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# .NET build output
+[Bb]in/
+[Oo]bj/
+
+# Local SDK/NuGet caches
+.dotnet-home/
+
+# Test and local runtime artifacts
+TestResults/
+*.db-shm
+*.db-wal
