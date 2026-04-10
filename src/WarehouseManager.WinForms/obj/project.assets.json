@@ -1363,19 +1363,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\user\\.nuget\\packages\\": {}
+    "C:\\Users\\artem\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\user\\Desktop\\warehouse-v2\\src\\WarehouseManager.WinForms\\WarehouseManager.WinForms.csproj",
+      "projectUniqueName": "C:\\develop\\warehouse-v2\\warehouse-v2\\src\\WarehouseManager.WinForms\\WarehouseManager.WinForms.csproj",
       "projectName": "WarehouseManager.WinForms",
-      "projectPath": "C:\\Users\\user\\Desktop\\warehouse-v2\\src\\WarehouseManager.WinForms\\WarehouseManager.WinForms.csproj",
-      "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\user\\Desktop\\warehouse-v2\\src\\WarehouseManager.WinForms\\obj\\",
+      "projectPath": "C:\\develop\\warehouse-v2\\warehouse-v2\\src\\WarehouseManager.WinForms\\WarehouseManager.WinForms.csproj",
+      "packagesPath": "C:\\Users\\artem\\.nuget\\packages\\",
+      "outputPath": "C:\\develop\\warehouse-v2\\warehouse-v2\\src\\WarehouseManager.WinForms\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\artem\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1389,11 +1394,11 @@
         "net8.0-windows7.0": {
           "targetAlias": "net8.0-windows",
           "projectReferences": {
-            "C:\\Users\\user\\Desktop\\warehouse-v2\\src\\WarehouseManager.Application\\WarehouseManager.Application.csproj": {
-              "projectPath": "C:\\Users\\user\\Desktop\\warehouse-v2\\src\\WarehouseManager.Application\\WarehouseManager.Application.csproj"
+            "C:\\develop\\warehouse-v2\\warehouse-v2\\src\\WarehouseManager.Application\\WarehouseManager.Application.csproj": {
+              "projectPath": "C:\\develop\\warehouse-v2\\warehouse-v2\\src\\WarehouseManager.Application\\WarehouseManager.Application.csproj"
             },
-            "C:\\Users\\user\\Desktop\\warehouse-v2\\src\\WarehouseManager.Infrastructure\\WarehouseManager.Infrastructure.csproj": {
-              "projectPath": "C:\\Users\\user\\Desktop\\warehouse-v2\\src\\WarehouseManager.Infrastructure\\WarehouseManager.Infrastructure.csproj"
+            "C:\\develop\\warehouse-v2\\warehouse-v2\\src\\WarehouseManager.Infrastructure\\WarehouseManager.Infrastructure.csproj": {
+              "projectPath": "C:\\develop\\warehouse-v2\\warehouse-v2\\src\\WarehouseManager.Infrastructure\\WarehouseManager.Infrastructure.csproj"
             }
           }
         }

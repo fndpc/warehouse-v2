@@ -50,6 +50,40 @@ public sealed class WarehouseOperationsServiceTests
         }
     }
 
+    [TestMethod]
+    public async Task DeleteProductAsync_DeactivatesProductWithoutStock()
+    {
+        await using var connection = new SqliteConnection("Data Source=:memory:");
+        await connection.OpenAsync();
+        using var scope = await CreateScopeAsync(connection);
+        var service = scope.ServiceProvider.GetRequiredService<IWarehouseOperationsService>();
+
+        var productId = await service.CreateProductAsync(new CreateProductRequest("DEL-001", "Delete Me", "Standard", 1m, null, null, null));
+
+        await service.DeleteProductAsync(productId);
+
+        var activeProducts = await service.GetProductsAsync();
+        var catalog = await service.GetProductCatalogAsync();
+
+        Assert.IsFalse(activeProducts.Any(x => x.Id == productId));
+        Assert.IsTrue(catalog.Any(x => x.Id == productId && !x.IsActive));
+    }
+
+    [TestMethod]
+    public async Task DeleteStorageLocationAsync_WithStock_Throws()
+    {
+        await using var connection = new SqliteConnection("Data Source=:memory:");
+        await connection.OpenAsync();
+        using var scope = await CreateScopeAsync(connection);
+        var service = scope.ServiceProvider.GetRequiredService<IWarehouseOperationsService>();
+
+        var productId = await service.CreateProductAsync(new CreateProductRequest("LOC-PRD", "Stocked Product", "Standard", 1m, null, null, null));
+        var locationId = await service.CreateStorageLocationAsync(new CreateStorageLocationRequest("A-01-01", "A", "01", "01"));
+        await service.ReceiveAsync(new ReceiptRequest(productId, locationId, 5m, "BATCH-1", null, null, "REC-1", "seed"));
+
+        await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => service.DeleteStorageLocationAsync(locationId));
+    }
+
     private static async Task<IServiceScope> CreateScopeAsync(SqliteConnection connection)
     {
         var services = new ServiceCollection();

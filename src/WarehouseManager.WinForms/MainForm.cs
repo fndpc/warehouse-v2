@@ -282,9 +282,12 @@ public sealed class MainForm : Form
         var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, AutoSize = true, WrapContents = true };
         var addButton = new Button { Text = "Сохранить товар", AutoSize = true };
         addButton.Click += async (_, _) => await CreateProductAsync();
+        var deleteButton = new Button { Text = "Удалить выбранный", AutoSize = true };
+        deleteButton.Click += async (_, _) => await DeleteSelectedProductAsync();
         var refreshButton = new Button { Text = "Обновить список", AutoSize = true };
         refreshButton.Click += async (_, _) => await LoadCatalogsAsync();
         buttons.Controls.Add(addButton);
+        buttons.Controls.Add(deleteButton);
         buttons.Controls.Add(refreshButton);
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 56));
         layout.Controls.Add(buttons, 1, 8);
@@ -304,9 +307,12 @@ public sealed class MainForm : Form
         var buttons = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, AutoSize = true, WrapContents = true };
         var addButton = new Button { Text = "Сохранить ячейку", AutoSize = true };
         addButton.Click += async (_, _) => await CreateLocationAsync();
+        var deleteButton = new Button { Text = "Удалить выбранную", AutoSize = true };
+        deleteButton.Click += async (_, _) => await DeleteSelectedLocationAsync();
         var refreshButton = new Button { Text = "Обновить список", AutoSize = true };
         refreshButton.Click += async (_, _) => await LoadCatalogsAsync();
         buttons.Controls.Add(addButton);
+        buttons.Controls.Add(deleteButton);
         buttons.Controls.Add(refreshButton);
         layout.Controls.Add(buttons, 1, 4);
         group.Controls.Add(layout);
@@ -581,6 +587,66 @@ public sealed class MainForm : Form
                 locationRackBox.Text,
                 locationSlotBox.Text));
             ClearLocationForm();
+            await ReloadAllAsync();
+        }
+        catch (Exception ex)
+        {
+            ShowError(ex);
+        }
+    }
+
+    private async Task DeleteSelectedProductAsync()
+    {
+        if (productGrid.CurrentRow?.DataBoundItem is not ProductDto product)
+        {
+            MessageBox.Show("Выберите товар в таблице.", "Удаление товара", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        var confirm = MessageBox.Show(
+            $"Удалить товар \"{product.Name}\" ({product.Sku})?",
+            "Удаление товара",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question);
+
+        if (confirm != DialogResult.Yes)
+        {
+            return;
+        }
+
+        try
+        {
+            await warehouseService.DeleteProductAsync(product.Id);
+            await ReloadAllAsync();
+        }
+        catch (Exception ex)
+        {
+            ShowError(ex);
+        }
+    }
+
+    private async Task DeleteSelectedLocationAsync()
+    {
+        if (locationGrid.CurrentRow?.DataBoundItem is not StorageLocationDto location)
+        {
+            MessageBox.Show("Выберите ячейку в таблице.", "Удаление ячейки", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        var confirm = MessageBox.Show(
+            $"Удалить ячейку \"{location.Code}\"?",
+            "Удаление ячейки",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Question);
+
+        if (confirm != DialogResult.Yes)
+        {
+            return;
+        }
+
+        try
+        {
+            await warehouseService.DeleteStorageLocationAsync(location.Id);
             await ReloadAllAsync();
         }
         catch (Exception ex)

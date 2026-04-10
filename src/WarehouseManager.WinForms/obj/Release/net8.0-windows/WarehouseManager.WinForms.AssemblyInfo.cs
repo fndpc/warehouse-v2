@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WarehouseManager.WinForms")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0005ac27765cb7c0cf8d872b497a4eb7c9342d00")]
 [assembly: System.Reflection.AssemblyProductAttribute("WarehouseManager.WinForms")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WarehouseManager.WinForms")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

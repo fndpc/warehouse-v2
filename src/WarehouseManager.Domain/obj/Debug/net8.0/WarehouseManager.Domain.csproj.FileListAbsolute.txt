@@ -9,3 +9,15 @@ C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Domain\obj\Debug\net8.0\
 C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Domain\obj\Debug\net8.0\refint\WarehouseManager.Domain.dll
 C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Domain\obj\Debug\net8.0\WarehouseManager.Domain.pdb
 C:\Users\user\Desktop\warehouse-v2\src\WarehouseManager.Domain\obj\Debug\net8.0\ref\WarehouseManager.Domain.dll
+C:\develop\warehouse-v2\warehouse-v2\src\WarehouseManager.Domain\bin\Debug\net8.0\WarehouseManager.Domain.deps.json
+C:\develop\warehouse-v2\warehouse-v2\src\WarehouseManager.Domain\bin\Debug\net8.0\WarehouseManager.Domain.dll
+C:\develop\warehouse-v2\warehouse-v2\src\WarehouseManager.Domain\bin\Debug\net8.0\WarehouseManager.Domain.pdb
+C:\develop\warehouse-v2\warehouse-v2\src\WarehouseManager.Domain\obj\Debug\net8.0\WarehouseManager.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\develop\warehouse-v2\warehouse-v2\src\WarehouseManager.Domain\obj\Debug\net8.0\WarehouseManager.Domain.AssemblyInfoInputs.cache
+C:\develop\warehouse-v2\warehouse-v2\src\WarehouseManager.Domain\obj\Debug\net8.0\WarehouseManager.Domain.AssemblyInfo.cs
+C:\develop\warehouse-v2\warehouse-v2\src\WarehouseManager.Domain\obj\Debug\net8.0\WarehouseManager.Domain.csproj.CoreCompileInputs.cache
+C:\develop\warehouse-v2\warehouse-v2\src\WarehouseManager.Domain\obj\Debug\net8.0\WarehouseManager.Domain.sourcelink.json
+C:\develop\warehouse-v2\warehouse-v2\src\WarehouseManager.Domain\obj\Debug\net8.0\WarehouseManager.Domain.dll
+C:\develop\warehouse-v2\warehouse-v2\src\WarehouseManager.Domain\obj\Debug\net8.0\refint\WarehouseManager.Domain.dll
+C:\develop\warehouse-v2\warehouse-v2\src\WarehouseManager.Domain\obj\Debug\net8.0\WarehouseManager.Domain.pdb
+C:\develop\warehouse-v2\warehouse-v2\src\WarehouseManager.Domain\obj\Debug\net8.0\ref\WarehouseManager.Domain.dll

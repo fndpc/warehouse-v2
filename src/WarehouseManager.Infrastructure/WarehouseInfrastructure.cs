@@ -279,6 +279,28 @@ public sealed class WarehouseOperationsService(
         return product.Id;
     }
 
+    public async Task DeleteProductAsync(int productId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+        var product = await db.Products.FirstOrDefaultAsync(x => x.Id == productId, cancellationToken)
+            ?? throw new InvalidOperationException("Товар не найден.");
+
+        var hasStock = await db.StockLots.AnyAsync(x => x.ProductId == productId && x.Quantity > 0, cancellationToken);
+        if (hasStock)
+        {
+            throw new InvalidOperationException("Нельзя удалить товар, пока по нему есть остатки.");
+        }
+
+        if (!product.IsActive)
+        {
+            return;
+        }
+
+        product.IsActive = false;
+        db.AuditEvents.Add(CreateAudit("Удаление товара", "Товар", product.Sku, $"Товар «{product.Name}» деактивирован."));
+        await db.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task<int> CreateStorageLocationAsync(CreateStorageLocationRequest request, CancellationToken cancellationToken = default)
     {
         ValidateRequiredText(request.Code, "Код ячейки");
@@ -305,6 +327,28 @@ public sealed class WarehouseOperationsService(
         db.AuditEvents.Add(CreateAudit("Создание ячейки", "Ячейка", normalizedCode, "Добавлена новая ячейка хранения."));
         await db.SaveChangesAsync(cancellationToken);
         return location.Id;
+    }
+
+    public async Task DeleteStorageLocationAsync(int locationId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await dbContextFactory.CreateDbContextAsync(cancellationToken);
+        var location = await db.StorageLocations.FirstOrDefaultAsync(x => x.Id == locationId, cancellationToken)
+            ?? throw new InvalidOperationException("Ячейка не найдена.");
+
+        var hasStock = await db.StockLots.AnyAsync(x => x.LocationId == locationId && x.Quantity > 0, cancellationToken);
+        if (hasStock)
+        {
+            throw new InvalidOperationException("Нельзя удалить ячейку, пока в ней есть остатки.");
+        }
+
+        if (!location.IsActive)
+        {
+            return;
+        }
+
+        location.IsActive = false;
+        db.AuditEvents.Add(CreateAudit("Удаление ячейки", "Ячейка", location.Code, "Ячейка деактивирована."));
+        await db.SaveChangesAsync(cancellationToken);
     }
 
     public async Task ReceiveAsync(ReceiptRequest request, CancellationToken cancellationToken = default)

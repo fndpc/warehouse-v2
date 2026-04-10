@@ -157,7 +157,9 @@ public interface IWarehouseOperationsService
     Task TransferAsync(TransferRequest request, CancellationToken cancellationToken = default);
     Task ShipAsync(ShipmentRequest request, CancellationToken cancellationToken = default);
     Task<int> CreateProductAsync(CreateProductRequest request, CancellationToken cancellationToken = default);
+    Task DeleteProductAsync(int productId, CancellationToken cancellationToken = default);
     Task<int> CreateStorageLocationAsync(CreateStorageLocationRequest request, CancellationToken cancellationToken = default);
+    Task DeleteStorageLocationAsync(int locationId, CancellationToken cancellationToken = default);
     Task<int> CreateInventoryAsync(CreateInventoryRequest request, CancellationToken cancellationToken = default);
     Task CountInventoryLineAsync(int lineId, decimal countedQuantity, string comment, bool isRecount, CancellationToken cancellationToken = default);
     Task CompleteInventoryAsync(int inventorySessionId, CancellationToken cancellationToken = default);

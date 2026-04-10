@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "qKMhY7E3IyM=",
+  "dgSpecHash": "lBb173Ihac4=",
   "success": true,
-  "projectFilePath": "C:\\Users\\user\\Desktop\\warehouse-v2\\src\\WarehouseManager.Application\\WarehouseManager.Application.csproj",
+  "projectFilePath": "C:\\develop\\warehouse-v2\\warehouse-v2\\src\\WarehouseManager.Application\\WarehouseManager.Application.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }
