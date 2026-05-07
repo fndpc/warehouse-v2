@@ -1,8 +1,7 @@
 ﻿# Warehouse Manager v2
 
-Демо-видео: [warehousev2.mp4](https://raw.githubusercontent.com/whoaskeddd/portfolio/main/assets/videos/warehousev2.mp4)
+Демо-видео: [warehousev2.mp4](https://github.com/whoaskeddd/portfolio/blob/main/assets/videos/warehousev2.mp4)
 
-![Warehouse v2 Demo](https://raw.githubusercontent.com/whoaskeddd/portfolio/main/assets/videos/warehousev2.mp4)
 
 ## О проекте
 Warehouse Manager v2 — desktop-приложение складского учета на `C#`, `WinForms`, `.NET 8`, `SQLite`.
@@ -50,4 +49,5 @@ dotnet build src/WarehouseManager.WinForms/WarehouseManager.WinForms.csproj
 dotnet build tests/WarehouseManager.Tests/WarehouseManager.Tests.csproj
 dotnet test tests/WarehouseManager.Tests/WarehouseManager.Tests.csproj --no-build
 ```
+
 
